@@ -1,0 +1,78 @@
+.phoneWrapper {
+  position: relative;
+  background-color: #fff;
+  flex-shrink: 0;
+  
+  .phoneContentMain {
+    font-size: 0;
+  }
+
+  iframe {
+    border: 0;
+    width: 375px;
+    height: 595px;
+    overflow-y: scroll;
+  }
+
+  .loadingStyle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .loadingFont {
+      margin-left: 10px;
+      font-size: 20px;
+    }
+  }
+}
+
+.showBorder {
+  background-image: url('http://q4wpci6vb.sabkt.gdipper.com/dsfsf.png');
+  background-size: 424px auto;
+  background-repeat: no-repeat;
+  box-sizing: content-box;
+  padding: 3px;
+  border-radius: 50px;
+  .phoneContentBorderOutSide {
+    border: 6px solid #cacaca;
+    width: 377px;
+    padding: 64px 14px;
+    box-sizing: content-box;
+    border-radius: 50px;
+    position: relative;
+
+    .phoneContentBorderInner {
+      border: 1px solid #999;
+  
+      .phoneContentTitle {
+        box-sizing: content-box;
+        padding-top: 20px;
+        height: 43px;
+        line-height: 43px;
+        font-size: 16px;
+        text-align: center;
+        font-weight: bold;
+      }
+  
+      .phoneContentMain {
+        background: #fff;
+      }
+    }
+
+    .phoneContentCircle {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 4px solid rgb(223, 223, 223);
+      left: 50%;
+      transform: translate(-50%, 7px);
+    }
+  }
+}

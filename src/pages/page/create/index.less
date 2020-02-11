@@ -1,0 +1,82 @@
+@import '~antd/es/style/themes/default.less';
+
+:global {
+  .ant-pro-page-header-wrap-extraContent {
+    width: 100%;
+  }
+}
+.pageHeaderButton {
+  float: right;
+
+  button {
+    margin-left: 10px;
+  }
+}
+
+.content {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+
+  .components, .schema {
+    height: 600px;
+    overflow: scroll;
+    box-sizing: border-box;
+  }
+
+  .components {
+    background: #fff;
+    padding: 0 20px 20px;
+    font-size: 0;
+
+    img {
+      width: 300px;
+      cursor: move;
+    }
+    img:hover {
+      box-shadow: 4px 4px 10px rgb(214, 214, 214);
+    }
+
+    .componentList {
+      margin-top: 20px;
+      font-size: 16px;
+
+      .componentInfo {
+        font-weight: 500;
+      }
+    }
+  }
+
+  .schema {
+    // display: none;
+    width: 500px;
+    background-color: #fff;
+    padding: 20px;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: center center;
+
+    .schemaPlaceholder {
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .schemaComponentName {
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .schemaForm {
+      margin-top: 20px;
+    }
+
+    .formBottom {
+      display: flex;
+      justify-content: flex-start;
+
+      >button {
+        margin: 0 10px;
+      }
+    }
+  }
+}
