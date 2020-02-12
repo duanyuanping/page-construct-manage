@@ -50,7 +50,13 @@ const UserModel: UserModelType = {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+      // const response = yield call(queryCurrent);
+      const response = {
+        name: "Serati Ma",
+        avatar: "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
+        userid: "00000001",
+        email: "antdesign@alipay.com"
+      }
       yield put({
         type: 'saveCurrentUser',
         payload: response,

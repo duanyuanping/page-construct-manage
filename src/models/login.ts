@@ -35,13 +35,13 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      });
-      // Login successfully
-      if (response.status === 'ok') {
+      // const response = yield call(fakeAccountLogin, payload);
+      // yield put({
+      //   type: 'changeLoginStatus',
+      //   payload: response,
+      // });
+      // // Login successfully
+      // if (response.status === 'ok') {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -58,7 +58,7 @@ const Model: LoginModelType = {
           }
         }
         router.replace(redirect || '/');
-      }
+      // }
     },
 
     *getCaptcha({ payload }, { call }) {

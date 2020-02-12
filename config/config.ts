@@ -67,6 +67,8 @@ if (isAntDesignProPreview) {
 }
 
 export default {
+  // base: '/manage/',
+  // publicPath: '/manage/',
   plugins,
   hash: true,
   targets: {
