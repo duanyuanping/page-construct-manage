@@ -2,12 +2,13 @@ import { AnyAction, Reducer } from 'redux';
 
 import { EffectsCommandMap } from 'dva';
 import { ListItemDataType, ResponseType } from './data.d';
-import { componentList, pageCode, pageConstruct } from './service';
+import { componentList, pageCode, pageConstruct, componentDetail } from './service';
 
 export interface StateType {
   componentList: ListItemDataType[];
   pageHtml: string;
   schemaRule: Partial<ListItemDataType>;
+  constructLoading: boolean;
 }
 
 export type Effect = (
@@ -38,6 +39,7 @@ const Model: ModelType = {
     schemaRule: {
       props: []
     },
+    constructLoading: false
   },
 
   effects: {
@@ -54,6 +56,13 @@ const Model: ModelType = {
       }
     },
     *fetchPageCode({ payload }, { call, put }) {
+      yield put({
+        type: 'setData',
+        payload: {
+          constructLoading: true
+        },
+      });
+
       const response: ResponseType = yield call(pageCode, payload);
       if (response.code === 0) {
         yield put({
@@ -63,21 +72,35 @@ const Model: ModelType = {
           },
         });
       }
+
+      yield put({
+        type: 'setData',
+        payload: {
+          constructLoading: false
+        },
+      });
     },
     *fetchComponentDetail({ payload }, { call, put }) {
       const { name } = payload;
-      const response: ResponseType = yield call(componentList, { name });
+      const response: ResponseType = yield call(componentDetail, name);
 
       if (response.code === 0) {
         yield put({
           type: 'setData',
           payload: {
-            schemaRule: response.data[0]
+            schemaRule: response.data
           },
         });
       }
     },
     *fetchPageConstruct({ payload, sucessCallBack, failCallBack }, { call, put }) {
+      yield put({
+        type: 'setData',
+        payload: {
+          constructLoading: true
+        },
+      });
+
       const response: ResponseType = yield call(pageConstruct, payload);
 
       if (response.code === 0) {
@@ -91,7 +114,15 @@ const Model: ModelType = {
       } else {
         failCallBack(response.msg);
       }
+
+      yield put({
+        type: 'setData',
+        payload: {
+          constructLoading: false
+        },
+      });
     }
+    
   },
 
   reducers: {

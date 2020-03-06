@@ -20,6 +20,12 @@ export async function componentList(params: ComponentListParamsType) {
   });
 }
 
+export async function componentDetail(name: string) {
+  return request('/online/api/component/detail', {
+    params: { name }
+  });
+}
+
 export async function pageCode(params: { uid: string }) {
   return request('/online/api/page/code', {
     params,

@@ -115,7 +115,7 @@ export default {
               component: './component',
             },
             {
-              name: '页面预览',
+              // name: '页面预览',
               // icon: 'smile',
               path: '/page/preview',
               component: './page/preview',

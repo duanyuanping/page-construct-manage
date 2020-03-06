@@ -1,13 +1,13 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { Component } from 'react';
-import { connect } from 'dva';
-import { Form, Input, InputNumber, message, Button, Popconfirm, Icon } from 'antd';
+import { connect, Dispatch } from 'dva';
+import { Form, Input, InputNumber, message, Button } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
-import { Dispatch } from 'redux';
 import { routerRedux } from 'dva/router';
 import { throttle } from '@/utils/utils';
 import Phone from '@/components/Phone';
 import UpdatePage from '../list/components/UpdateForm';
+import Schema from './components/schema';
 import { StateType } from './model';
 import { PropType } from './data.d';
 import styles from './index.less';
@@ -30,6 +30,7 @@ interface ComponentState {
   addComponentName: string;
   isShowSchema: boolean;
   updateModalVisible: boolean;
+  showPreservation: boolean;
 }
 
 interface FetchComponentType {
@@ -50,6 +51,7 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
     addComponentName: '',
     isShowSchema: false,
     updateModalVisible: false,
+    showPreservation: false,
   }
 
   componentDidMount() {
@@ -137,9 +139,14 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
         uid: location.query.uid,
         components: componentsConfig
       },
-      sucessCallBack: () => message.success('构建成功'),
+      sucessCallBack: () => {
+        message.success('构建成功');
+        this.setState({
+          showPreservation: false
+        });
+      },
       failCallBack: (msg: string) => message.error(msg)
-    })
+    });
   }
 
   handleMessage = (e: any): void => {
@@ -167,61 +174,24 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
     }
   }
 
-  renderSchemaFormItem = (params: PropType): any => {
-    const { form: { getFieldDecorator } } = this.props;
-    const { schemaDefaultVal } = this.state;
-    const { key, type, desc } = params;
-    const init = schemaDefaultVal.props && schemaDefaultVal.props[key];
-
-    const map = {
-      array: (
-        <Form.Item label={`${desc}(${type})`}>
-          {getFieldDecorator(key, {
-            rules: [ {required: false} ],
-            initialValue: init && init.join && init.join('\n')
-          })(<Input.TextArea
-            autoSize={{ minRows: 2, maxRows: 5 }}
-            placeholder="请使用回车来分离各条数据"
-          />)}
-        </Form.Item>
-      ),
-      string: (
-        <Form.Item label={`${desc}(${type})`}>
-          {getFieldDecorator(key, {
-            rules: [ {required: false} ],
-            initialValue: init
-          })(<Input
-            placeholder="请输入"
-          />)}
-        </Form.Item>
-      ),
-      number: (
-        <Form.Item label={`${desc}(${type})`}>
-          {getFieldDecorator(key, {
-            rules: [ {required: false} ],
-            initialValue: init
-          })(<InputNumber
-            placeholder="请输入"
-          />)}
-        </Form.Item>
-      )
-    }
-
-    return map[type];
-  }
-
   handleFormChange = throttle(() => {
+    console.log('test000000')
     const { form : { validateFields }, pageCreate: { schemaRule } } = this.props;
     const { schemaDefaultVal } = this.state;
 
     validateFields((err, values) => {
       if (err) return;
+      console.log('test',values)
       schemaRule.props.forEach(({ key, type }) => {
         if (type === 'array' && typeof values[key] === 'string') {
           values[key] = values[key].split('\n');
         }
       });
       this.iframeRef.current.contentWindow.postMessage(`componentPropsUpdata:::${(schemaDefaultVal as { key: string }).key};;;${JSON.stringify(values)}`)
+
+      this.setState({
+        showPreservation: true
+      })
     });
   }, 200)
 
@@ -231,7 +201,7 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
 
   handleDeleteComponent = () => {
     this.iframeRef.current.contentWindow.postMessage('sendComponents');
-    this.isDeleteComponent = true
+    this.isDeleteComponent = true;
   }
 
   handleUpdatePageConfig = (data: string) => {
@@ -253,7 +223,13 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
         uid: location.query.uid,
         components
       },
-      sucessCallBack: () => message.success('构建成功'),
+      sucessCallBack: () => {
+        message.success('构建成功');
+
+        this.setState({
+          showPreservation: false
+        })
+      },
       failCallBack: (msg: string) => message.error(msg)
     });
   }
@@ -263,24 +239,12 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
       pageCreate: {
         componentList = [],
         pageHtml = '',
-        schemaRule,
+        constructLoading
       },
-      loading,
       location,
       dispatch
     } = this.props;
-    const { isShowSchema, updateModalVisible } = this.state;
-
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-      },
-    };
+    const { isShowSchema, updateModalVisible, showPreservation, schemaDefaultVal } = this.state;
 
     return (
       <div>
@@ -291,16 +255,18 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
               <Button
                 type="primary"
                 onClick={() => window.open(`/page/preview?uid=${location.query.uid}`)}
-                loading={loading}
+                loading={constructLoading}
               >预览</Button>
               <Button
-                loading={loading}
+                loading={constructLoading}
                 type="primary"
                 onClick={() => this.setState({ updateModalVisible: true })}
               >上线</Button>
             </div>
           }
         />
+
+        {/** 组件列表板块 */}
         <div className={styles.content}>
           <div className={styles.components}>
             {
@@ -319,58 +285,27 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
               ))
             }
           </div>
+
+          {/** 页面预览板块 */}
           <Phone
-            loading={loading}
+            loading={constructLoading}
             iframeRef={this.iframeRef}
             // content="/page/test"
             content={pageHtml}
             // showBorder={true}
           />
-          <div
-            className={styles.schema}
-            style={{
-              // backgroundImage: isShowSchema ? '' : `url(${freeIcon})`
-            }}
-          >
-            { !isShowSchema && <div className={styles.schemaPlaceholder}>点击预览页面中的组件，本区域将展示对应组件的schema。</div>}
-            <div style={{ display: isShowSchema ? 'block' : 'none' }}>
-              <div className={styles.schemaComponentName}>
-                {schemaRule.nameCh}
-              </div>
-              <Form
-                {...formItemLayout}
-                className={styles.schemaForm}
-                onChange={this.handleFormChange}
-              >
-                {
-                  schemaRule.props.map(prop => this.renderSchemaFormItem(prop))
-                }
-                <div className={styles.formBottom}>
-                  <Button
-                    type="primary"
-                    onClick={this.handleSaveClick}
-                    loading={loading}
-                  >
-                    保存
-                  </Button>
-                  <Popconfirm
-                    title="确认删除吗？"
-                    onConfirm={this.handleDeleteComponent}
-                    onCancel={() => {}}
-                    okText="是"
-                    cancelText="否"
-                  >
-                    <Button
-                      type="danger"
-                      loading={loading}
-                    >
-                      删除当前组件
-                    </Button>
-                  </Popconfirm>
-                </div>
-              </Form>
-            </div>
-          </div>
+
+          {/** schema 板块 */}
+          <Schema
+            key={schemaDefaultVal.key}
+            parentForm={this.props.form}
+            showPreservation={showPreservation}
+            isShowSchema={isShowSchema}
+            defaultValue={schemaDefaultVal}
+            handleSaveClick={this.handleSaveClick}
+            handleFormChange={this.handleFormChange}
+            handleDeleteComponent={this.handleDeleteComponent}
+          />
         </div>
         <UpdatePage
           onSuccess={() => {

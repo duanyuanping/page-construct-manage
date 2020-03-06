@@ -2,6 +2,7 @@ export interface PropType {
   key: string;
   type: string;
   desc: string;
+  child: any;
 }
 
 export interface ListItemDataType {
