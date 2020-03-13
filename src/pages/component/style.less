@@ -4,6 +4,47 @@
 .coverCardList {
   margin-bottom: -24px;
 
+  .buttonWrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .itemWrapper {
+    position: relative;
+
+    .itemMongolia {
+      opacity: 0;
+      transition: 0.3s opacity;
+      position: absolute;
+      z-index: 100;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 23px;
+
+      > i {
+        margin: 0 10px;
+        cursor: pointer;
+      }
+      i:first-child {
+        color: #1890ff;
+      }
+      i:last-child {
+        color: rgb(255, 77, 79);
+      }
+    }
+  }
+  .itemWrapper:hover {
+    .itemMongolia {
+      opacity: 1;
+    }
+  }
+
   .card {
     :global {
       .ant-card-meta-title {
@@ -55,3 +96,5 @@
     }
   }
 }
+
+

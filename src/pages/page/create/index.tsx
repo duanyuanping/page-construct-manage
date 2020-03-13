@@ -175,13 +175,11 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
   }
 
   handleFormChange = throttle(() => {
-    console.log('test000000')
     const { form : { validateFields }, pageCreate: { schemaRule } } = this.props;
     const { schemaDefaultVal } = this.state;
 
     validateFields((err, values) => {
       if (err) return;
-      console.log('test',values)
       schemaRule.props.forEach(({ key, type }) => {
         if (type === 'array' && typeof values[key] === 'string') {
           values[key] = values[key].split('\n');
@@ -190,7 +188,11 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
       this.iframeRef.current.contentWindow.postMessage(`componentPropsUpdata:::${(schemaDefaultVal as { key: string }).key};;;${JSON.stringify(values)}`)
 
       this.setState({
-        showPreservation: true
+        showPreservation: true,
+        schemaDefaultVal: {
+          key: schemaDefaultVal.key,
+          props: values,
+        }
       })
     });
   }, 200)

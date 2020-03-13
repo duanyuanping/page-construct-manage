@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import { connect } from 'dva';
 import { Form, Button, Popconfirm, Input, InputNumber } from 'antd';
+import ListItemWrap from '../list-item-wrap';
 import { StateType } from '../../model';
 import { PropType } from '../../data.d';
 
@@ -41,7 +42,7 @@ const schema = (props: PropsType) => {
         setListLength({ ...listLength, [key]: val.length });
       }
     });
-  }, [])
+  }, [defaultValue])
 
   const schemaStyle = !isShowSchema && document.body.clientWidth < 1270 ? {
     position: 'absolute',
@@ -63,13 +64,11 @@ const schema = (props: PropsType) => {
 
   // 数据类型为array的属性变化的时候才会触发
   const handleArrFormChange = (key: string, child: any, length: number) => {
-    // console.log('test000000000', form.getFieldsValue())
     const formVal = form.getFieldsValue();
     let arrayVal: any[] = [];
 
     // 数组类型属性值读取，数组子元素类型可以是string和map
     if (child instanceof Array) {
-      
       Array(length).fill('').forEach((_, index) => {
         const childVal = {};
 
@@ -87,6 +86,14 @@ const schema = (props: PropsType) => {
     parentForm.setFieldsValue({ [key]: arrayVal });
     handleFormChange();
   }
+
+  // 数据类型为array属性值删除操作
+  const handleDeleteArrayItem = (key: string, val: any[], index: number) => {
+    const newVal = JSON.parse(JSON.stringify(val));
+    newVal.splice(index, 1);
+    parentForm.setFieldsValue({ [key]: newVal });
+    handleFormChange();
+  };
 
   const renderSchemaFormItem = (params: PropType, value: any, showLabel: boolean, getFieldDecorator: any): any => {
     const { key, type, desc, child } = params;
@@ -114,7 +121,9 @@ const schema = (props: PropsType) => {
               !child || typeof child === 'string'
               ? (
                 init && init.map && init.map((val: any, index: number) => (
-                  <div className={styles.schemaListItemStyle}>
+                  <ListItemWrap
+                    onDelete={() => handleDeleteArrayItem(key, init, index)}
+                  >
                     {
                       renderSchemaFormItem(
                         {
@@ -128,12 +137,14 @@ const schema = (props: PropsType) => {
                         currentGetFieldDecorator
                       )
                     }
-                  </div>
+                  </ListItemWrap>
                 ))
               )
               : (
                 init && init.map && init.map((val: any, index: number) => (
-                  <div className={styles.schemaListItemStyle}>
+                  <ListItemWrap
+                    onDelete={() => handleDeleteArrayItem(key, init, index)}
+                  >
                     {
                       child.map((rule: any) => (
                         renderSchemaFormItem(
@@ -149,7 +160,7 @@ const schema = (props: PropsType) => {
                         )
                       ))
                     }
-                  </div>
+                  </ListItemWrap>
                 ))
               )
             }
@@ -161,7 +172,7 @@ const schema = (props: PropsType) => {
                   [key]: (listLength[key] || 0) + 1
                 })
               }}
-            >点击新增</div>
+            >新增列表</div>
           </Form>
         </Form.Item>
       ),
