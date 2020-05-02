@@ -294,6 +294,7 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
             iframeRef={this.iframeRef}
             // content="/page/test"
             content={pageHtml}
+            // content="http://www.test.com/temp"
             // showBorder={true}
           />
 

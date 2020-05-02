@@ -262,6 +262,8 @@ const schema = (props: PropsType) => {
             </Popconfirm>
           </div>
         </Form>
+        {/* 单个组件边距样式 */}
+        
       </div>
     </div>
   );
