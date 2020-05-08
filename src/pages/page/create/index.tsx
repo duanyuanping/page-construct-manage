@@ -289,26 +289,30 @@ class PageCreate extends Component<ComponentProps, ComponentState> {
           </div>
 
           {/** 页面预览板块 */}
-          <Phone
-            loading={constructLoading}
-            iframeRef={this.iframeRef}
-            // content="/page/test"
-            content={pageHtml}
-            // content="http://www.test.com/temp"
-            // showBorder={true}
-          />
+          <div>
+            <Phone
+              loading={constructLoading}
+              iframeRef={this.iframeRef}
+              // content="/page/test"
+              content={pageHtml}
+              // content="http://www.test.com/temp"
+              // showBorder={true}
+            />
+          </div>
 
           {/** schema 板块 */}
-          <Schema
-            key={schemaDefaultVal.key}
-            parentForm={this.props.form}
-            showPreservation={showPreservation}
-            isShowSchema={isShowSchema}
-            defaultValue={schemaDefaultVal}
-            handleSaveClick={this.handleSaveClick}
-            handleFormChange={this.handleFormChange}
-            handleDeleteComponent={this.handleDeleteComponent}
-          />
+          <div>
+            <Schema
+              key={schemaDefaultVal.key}
+              parentForm={this.props.form}
+              showPreservation={showPreservation}
+              isShowSchema={isShowSchema}
+              defaultValue={schemaDefaultVal}
+              handleSaveClick={this.handleSaveClick}
+              handleFormChange={this.handleFormChange}
+              handleDeleteComponent={this.handleDeleteComponent}
+            />
+          </div>
         </div>
         <UpdatePage
           onSuccess={() => {
